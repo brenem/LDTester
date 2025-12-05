@@ -6,15 +6,15 @@ using LaunchDarkly.Sdk.Server;
 using Microsoft.Extensions.DependencyInjection;
 using OpenFeature.Model;
 
-var userKey = "";
+var userKey = "anonymous";
 var userEmail = "";
-var flagKey = "";
+var flagKey = "job-importer-optionally-omit-shift-changes";
 
 IServiceCollection services = new ServiceCollection();
 
 await services.AddFeatureManagementAsync(() =>
 {
-    var sdkKey = "";
+    var sdkKey = "sdk-0ed8a92c-fc76-4582-ae0c-66b0eb3a70a1";
     var config = Configuration.Builder(sdkKey).Build();
     var ldProvider = new Provider(config);
     return ldProvider;
@@ -24,12 +24,12 @@ var sp = services.BuildServiceProvider();
 
 var featureFlagClient = sp.GetRequiredService<IFeatureFlagClient>();
 
-var userContext = EvaluationContext.Builder()
+var context = EvaluationContext.Builder()
     .SetTargetingKey(userKey)
     //.Name(userEmail)
-    .Set("email", userEmail)
+    // .Set("email", userEmail)
     .Build();
 
-var enabled = await featureFlagClient.GetBooleanValue(flagKey, false, userContext);
+var enabled = await featureFlagClient.GetBooleanValue(flagKey, false, context);
 
 Console.WriteLine($"Flag is enabled: {enabled}");
